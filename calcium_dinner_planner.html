@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>強い骨を作るための工夫を知ろう</title>
+<style>
+  :root {
+    --bone-cream: #FFF8F0;
+    --bone-warm: #F5E6D0;
+    --milk-white: #FFFDF9;
+    --ca-blue: #3A7BD5;
+    --ca-blue-light: #EBF2FF;
+    --ca-blue-mid: #C3D9FF;
+    --ok-green: #2ECC71;
+    --ok-green-bg: #E8F8F1;
+    --ng-amber: #E67E22;
+    --ng-amber-bg: #FEF3E2;
+    --text-dark: #2C3E50;
+    --text-mid: #5D6D7E;
+    --text-light: #95A5A6;
+    --card-shadow: 0 3px 12px rgba(0,0,0,0.10);
+    --card-radius: 16px;
+    --accent-yellow: #F1C40F;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    background: var(--bone-cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #3A7BD5 0%, #1E5CB3 100%);
+    color: white;
+    padding: 20px 24px 16px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(58,123,213,0.35);
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+  }
+  header p {
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.85;
+  }
+
+  /* ===== GENDER SELECT ===== */
+  #gender-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 90px);
+    padding: 24px;
+    gap: 28px;
+  }
+  #gender-screen h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-dark);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .gender-buttons {
+    display: flex;
+    gap: 20px;
+  }
+  .gender-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border: 3px solid var(--ca-blue-mid);
+    border-radius: 20px;
+    padding: 28px 32px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ca-blue);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 130px;
+    box-shadow: var(--card-shadow);
+  }
+  .gender-btn .emoji { font-size: 52px; }
+  .gender-btn:hover, .gender-btn:active {
+    background: var(--ca-blue);
+    color: white;
+    border-color: var(--ca-blue);
+    transform: scale(1.04);
+  }
+
+  /* ===== MAIN APP ===== */
+  #app-screen { display: none; }
+
+  /* status bar */
+  .status-bar {
+    background: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid var(--bone-warm);
+    flex-wrap: wrap;
+  }
+  .status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--ca-blue-light);
+    border-radius: 12px;
+    padding: 8px 14px;
+    min-width: 90px;
+  }
+  .status-item .label {
+    font-size: 10px;
+    color: var(--text-mid);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .status-item .value {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--ca-blue);
+    line-height: 1.1;
+  }
+  .status-item .unit { font-size: 11px; font-weight: 600; color: var(--ca-blue); }
+  .status-divider { font-size: 22px; color: var(--text-light); }
+  .status-item.target { background: var(--bone-warm); }
+  .status-item.target .value { color: #C0392B; }
+  .status-item.target .unit { color: #C0392B; }
+
+  .count-badge {
+    margin-left: auto;
+    background: var(--ca-blue);
+    color: white;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .count-badge.full { background: var(--ng-amber); }
+
+  /* result bar */
+  .result-bar {
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 800;
+    border-bottom: 2px solid transparent;
+    transition: all 0.4s ease;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .result-bar.insufficient {
+    background: var(--ng-amber-bg);
+    border-color: var(--ng-amber);
+    color: #9B4400;
+  }
+  .result-bar.sufficient {
+    background: var(--ok-green-bg);
+    border-color: var(--ok-green);
+    color: #1A7A45;
+  }
+  .result-bar.empty {
+    background: var(--bone-warm);
+    color: var(--text-light);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* layout */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    height: calc(100vh - 220px);
+    overflow: hidden;
+  }
+
+  /* ===== FOOD LIST (left / top) ===== */
+  .food-list-section {
+    overflow-y: auto;
+    padding: 12px;
+    background: var(--milk-white);
+  }
+  .category-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-mid);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 4px 4px;
+  }
+  .food-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .food-card {
+    background: white;
+    border: 2.5px solid var(--bone-warm);
+    border-radius: 12px;
+    padding: 10px 10px 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .food-card .food-emoji { font-size: 26px; flex-shrink: 0; }
+  .food-card .food-info { flex: 1; min-width: 0; }
+  .food-card .food-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.3;
+    word-break: keep-all;
+  }
+  .food-card .food-ca {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ca-blue);
+    margin-top: 1px;
+  }
+  .food-card:hover {
+    border-color: var(--ca-blue);
+    background: var(--ca-blue-light);
+  }
+  .food-card.selected {
+    border-color: var(--ca-blue);
+    background: var(--ca-blue-light);
+    box-shadow: 0 0 0 3px rgba(58,123,213,0.25);
+  }
+  .food-card.selected .food-name { color: var(--ca-blue); }
+  .food-card.disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .check-mark {
+    font-size: 18px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .food-card.selected .check-mark { opacity: 1; }
+
+  /* ===== SELECTED TRAY ===== */
+  .tray-section {
+    background: white;
+    border-top: 2px solid var(--bone-warm);
+    padding: 10px 12px;
+    overflow-y: auto;
+    max-height: 200px;
+  }
+  .tray-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-mid);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .tray-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .tray-chip {
+    background: var(--ca-blue-light);
+    border: 2px solid var(--ca-blue-mid);
+    border-radius: 20px;
+    padding: 5px 10px 5px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ca-blue);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tray-chip:hover { background: #FDECEA; border-color: #E57373; color: #C0392B; }
+  .tray-chip .chip-emoji { font-size: 16px; }
+  .tray-chip .chip-remove { font-size: 12px; opacity: 0.7; }
+  .tray-empty {
+    font-size: 13px;
+    color: var(--text-light);
+    padding: 4px 0;
+  }
+
+  /* ===== ADVICE MESSAGE ===== */
+  .advice-bar {
+    background: linear-gradient(135deg, #FFF9E6, #FFF3CC);
+    border-top: 2px solid var(--accent-yellow);
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #856404;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* ===== RESET BUTTON ===== */
+  .reset-btn {
+    display: block;
+    margin: 10px auto 0;
+    background: white;
+    border: 2px solid var(--text-light);
+    border-radius: 20px;
+    padding: 7px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: #E57373; color: #C0392B; }
+
+  /* iPad landscape optimization */
+  @media (min-width: 768px) {
+    header h1 { font-size: 22px; }
+    .food-grid { grid-template-columns: repeat(3, 1fr); }
+    .main-layout {
+      grid-template-columns: 1fr 320px;
+      grid-template-rows: 1fr;
+      height: calc(100vh - 200px);
+    }
+    .food-list-section { border-right: 2px solid var(--bone-warm); }
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .tray-section {
+      flex: 1;
+      border-top: none;
+      border-left: none;
+      max-height: none;
+    }
+    .advice-bar { font-size: 13px; }
+  }
+
+  @media (min-width: 1024px) {
+    .food-grid { grid-template-columns: repeat(4, 1fr); }
+    header h1 { font-size: 24px; }
+  }
+
+  /* animations */
+  @keyframes pop-in {
+    0% { transform: scale(0.8); opacity: 0; }
+    80% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .result-bar.sufficient, .result-bar.insufficient {
+    animation: pop-in 0.35s ease;
+  }
+  
+  /* progress bar */
+  .progress-wrap {
+    padding: 0 16px 8px;
+    background: white;
+  }
+  .progress-track {
+    height: 10px;
+    background: var(--bone-warm);
+    border-radius: 5px;
+    overflow: visible;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #3A7BD5, #2ECC71);
+    transition: width 0.4s ease;
+    max-width: 100%;
+  }
+  .progress-fill.over { background: linear-gradient(90deg, #2ECC71, #1ABC9C); }
+  .target-line {
+    position: absolute;
+    top: -3px;
+    height: 16px;
+    width: 3px;
+    background: #C0392B;
+    border-radius: 2px;
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-mid);
+    font-weight: 600;
+    margin-top: 3px;
+  }
+</style>
+</head>
+<body>
+
+<!-- GENDER SELECTION SCREEN -->
+<div id="gender-screen">
+  <header style="position:relative; width:100%; border-radius:0; margin: -24px -24px 0; padding: 20px 24px 16px;">
+    <h1>🦴 強い骨を作るための工夫を知ろう</h1>
+    <p>カルシウムを充足できる晩ごはんを考えよう</p>
+  </header>
+
+  <div style="height: 24px;"></div>
+  <h2>まず、あなたの<br>性別を選んでね</h2>
+  <div class="gender-buttons">
+    <button class="gender-btn" onclick="startApp('male')">
+      <span class="emoji">👦</span>
+      男子
+    </button>
+    <button class="gender-btn" onclick="startApp('female')">
+      <span class="emoji">👧</span>
+      女子
+    </button>
+  </div>
+  <p style="font-size:13px; color:var(--text-mid); text-align:center;">性別によってカルシウムの必要量が変わります</p>
+</div>
+
+<!-- MAIN APP SCREEN -->
+<div id="app-screen">
+  <header>
+    <h1>🦴 強い骨を作るための工夫を知ろう</h1>
+    <p id="header-sub">晩ごはんを選んで、カルシウムを充足させよう！</p>
+  </header>
+
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="label">朝食＋給食</span>
+      <span class="value">570</span>
+      <span class="unit">mg</span>
+    </div>
+    <div class="status-divider">＋</div>
+    <div class="status-item">
+      <span class="label">選んだ晩ごはん</span>
+      <span class="value" id="dinner-ca-val">0</span>
+      <span class="unit">mg</span>
+    </div>
+    <div class="status-divider">＝</div>
+    <div class="status-item">
+      <span class="label">今日の合計</span>
+      <span class="value" id="total-ca-val">570</span>
+      <span class="unit">mg</span>
+    </div>
+    <div class="status-divider">／</div>
+    <div class="status-item target">
+      <span class="label">1日の必要量</span>
+      <span class="value" id="target-val">1000</span>
+      <span class="unit">mg</span>
+    </div>
+    <div class="count-badge" id="count-badge">0／5 品</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track" id="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      <div class="target-line" id="target-line" style="left:57%"></div>
+    </div>
+    <div class="progress-labels">
+      <span>朝食＋給食 570mg ①</span>
+      <span id="target-label-right">必要量 1000mg</span>
+    </div>
+  </div>
+
+  <div class="result-bar empty" id="result-bar">
+    👆 右の料理一覧から晩ごはんを選んでね（最大5品）
+  </div>
+
+  <div class="main-layout">
+    <div class="food-list-section" id="food-list">
+      <!-- categories injected by JS -->
+    </div>
+    <div class="right-panel">
+      <div class="tray-section">
+        <div class="tray-title">🍽 選んだ料理</div>
+        <div class="tray-items" id="tray-items">
+          <span class="tray-empty">まだ選んでいません</span>
+        </div>
+        <button class="reset-btn" onclick="resetAll()">🔄 最初からやり直す</button>
+      </div>
+      <div class="advice-bar">
+        💡 カルシウムの量だけでなく、実際に食べられるような<br>
+        <strong>栄養バランスや料理の組み合わせ</strong>も考えよう！
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const FOODS = [
+  // 主食（左下の枠）
+  { id: 1,  cat: '🍚 主食', name: 'ごはん',       ca: 5,   emoji: '🍚' },
+  { id: 2,  cat: '🍚 主食', name: 'うどん',       ca: 80,  emoji: '🍜' },
+  { id: 3,  cat: '🍚 主食', name: 'スパゲティ',   ca: 40,  emoji: '🍝' },
+  { id: 4,  cat: '🍚 主食', name: 'ラーメン',     ca: 70,  emoji: '🍜' },
+  { id: 5,  cat: '🍚 主食', name: 'コッペパン',   ca: 40,  emoji: '🥖' },
+  { id: 6,  cat: '🍚 主食', name: 'チャーハン',   ca: 40,  emoji: '🍳' },
+  // 主菜（真ん中の枠）
+  { id: 7,  cat: '🥩 主菜', name: 'オムレツ',         ca: 40,  emoji: '🍳' },
+  { id: 8,  cat: '🥩 主菜', name: '卵焼き',           ca: 40,  emoji: '🍳' },
+  { id: 9,  cat: '🥩 主菜', name: 'ハンバーグ',       ca: 40,  emoji: '🍖' },
+  { id: 10, cat: '🥩 主菜', name: 'からあげ',         ca: 10,  emoji: '🍗' },
+  { id: 11, cat: '🥩 主菜', name: 'ぎょうざ',         ca: 70,  emoji: '🥟' },
+  { id: 12, cat: '🥩 主菜', name: 'コロッケ',         ca: 50,  emoji: '🫓' },
+  { id: 13, cat: '🥩 主菜', name: 'あじの塩焼き',     ca: 70,  emoji: '🐟' },
+  { id: 14, cat: '🥩 主菜', name: 'かれいの煮付け',   ca: 50,  emoji: '🐟' },
+  { id: 15, cat: '🥩 主菜', name: '焼きししゃも3匹',   ca: 220, emoji: '🐟' },
+  { id: 16, cat: '🥩 主菜', name: 'さけのソテー',     ca: 20,  emoji: '🐠' },
+  { id: 17, cat: '🥩 主菜', name: '豆腐',             ca: 80,  emoji: '⬜' },
+  { id: 18, cat: '🥩 主菜', name: '納豆',             ca: 40,  emoji: '🫘' },
+  { id: 19, cat: '🥩 主菜', name: 'おでん',           ca: 220, emoji: '🍢' },
+  // 副菜（左上の枠）
+  { id: 20, cat: '🥦 副菜', name: '五目豆',           ca: 70,  emoji: '🫘' },
+  { id: 21, cat: '🥦 副菜', name: 'ひじきの煮物',     ca: 160, emoji: '🌿' },
+  { id: 22, cat: '🥦 副菜', name: '切干大根の炒り煮', ca: 130, emoji: '🥕' },
+  { id: 23, cat: '🥦 副菜', name: '野菜炒め',         ca: 40,  emoji: '🥦' },
+  { id: 24, cat: '🥦 副菜', name: '野菜サラダ',       ca: 20,  emoji: '🥗' },
+  { id: 25, cat: '🥦 副菜', name: '小松菜のおひたし', ca: 140, emoji: '🥬' },
+  { id: 26, cat: '🥦 副菜', name: '酢の物',           ca: 30,  emoji: '🍱' },
+  // 汁物（右下の枠）
+  { id: 27, cat: '🥣 汁物', name: '豆腐の味噌汁', ca: 80,  emoji: '🥣' },
+  { id: 28, cat: '🥣 汁物', name: '野菜スープ',   ca: 40,  emoji: '🍲' },
+  { id: 29, cat: '🥣 汁物', name: 'シチュー',     ca: 110, emoji: '🍲' },
+  // デザート・飲み物（右上の枠）
+  { id: 30, cat: '🍮 デザート・飲み物', name: 'ヨーグルト和え', ca: 190, emoji: '🍦' },
+  { id: 31, cat: '🍮 デザート・飲み物', name: '牛乳',         ca: 220, emoji: '🥛' },
+  { id: 32, cat: '🍮 デザート・飲み物', name: 'お茶',         ca: 10,  emoji: '🍵' },
+];
+
+const BREAKFAST_CA = 570;
+const MAX_SELECT = 5;
+
+let gender = null;
+let target = 1000;
+let selected = new Set();
+
+function startApp(g) {
+  gender = g;
+  target = g === 'male' ? 1000 : 800;
+  document.getElementById('gender-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  document.getElementById('target-val').textContent = target;
+  document.getElementById('header-sub').textContent =
+    (g === 'male' ? '男子' : '女子') + ' 1日の目標：' + target + 'mg';
+  document.getElementById('target-label-right').textContent = '必要量 ' + target + 'mg';
+  renderFoodList();
+  updateTargetLine();
+  updateStatus();
+}
+
+function updateTargetLine() {
+  // target line at position: BREAKFAST_CA / target * 100 (but clamp)
+  const pct = Math.min(100, (BREAKFAST_CA / target) * 100);
+  document.getElementById('target-line').style.left = pct + '%';
+}
+
+// Group foods by category
+function groupByCategory(foods) {
+  const cats = {};
+  foods.forEach(f => {
+    if (!cats[f.cat]) cats[f.cat] = [];
+    cats[f.cat].push(f);
+  });
+  return cats;
+}
+
+function renderFoodList() {
+  const container = document.getElementById('food-list');
+  const cats = groupByCategory(FOODS);
+  container.innerHTML = '';
+  for (const [cat, items] of Object.entries(cats)) {
+    const label = document.createElement('div');
+    label.className = 'category-label';
+    label.textContent = cat;
+    container.appendChild(label);
+    const grid = document.createElement('div');
+    grid.className = 'food-grid';
+    items.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'food-card' + (selected.has(f.id) ? ' selected' : '');
+      card.id = 'card-' + f.id;
+      if (!selected.has(f.id) && selected.size >= MAX_SELECT) card.classList.add('disabled');
+      card.innerHTML = `
+        <span class="food-emoji">${f.emoji}</span>
+        <div class="food-info">
+          <div class="food-name">${f.name}</div>
+          <div class="food-ca">Ca: ${f.ca}mg</div>
+        </div>
+        <span class="check-mark">✅</span>
+      `;
+      card.onclick = () => toggleFood(f.id);
+      grid.appendChild(card);
+    });
+    container.appendChild(grid);
+  }
+}
+
+function toggleFood(id) {
+  if (selected.has(id)) {
+    selected.delete(id);
+  } else {
+    if (selected.size >= MAX_SELECT) return;
+    selected.add(id);
+  }
+  renderFoodList();
+  updateStatus();
+}
+
+function updateStatus() {
+  const dinnerCA = Array.from(selected).reduce((sum, id) => {
+    const f = FOODS.find(x => x.id === id);
+    return sum + (f ? f.ca : 0);
+  }, 0);
+  const totalCA = BREAKFAST_CA + dinnerCA;
+
+  document.getElementById('dinner-ca-val').textContent = dinnerCA;
+  document.getElementById('total-ca-val').textContent = totalCA;
+
+  // count badge
+  const badge = document.getElementById('count-badge');
+  badge.textContent = selected.size + '／' + MAX_SELECT + ' 品';
+  badge.className = 'count-badge' + (selected.size >= MAX_SELECT ? ' full' : '');
+
+  // progress bar
+  const maxBarCA = Math.max(target * 1.2, totalCA * 1.05);
+  const fillPct = Math.min(100, (totalCA / maxBarCA) * 100);
+  const fill = document.getElementById('progress-fill');
+  fill.style.width = fillPct + '%';
+  fill.className = 'progress-fill' + (totalCA >= target ? ' over' : '');
+
+  // target line position (relative to maxBarCA)
+  const targetPct = Math.min(100, (target / maxBarCA) * 100);
+  document.getElementById('target-line').style.left = targetPct + '%';
+
+  // result bar
+  const resultBar = document.getElementById('result-bar');
+  if (selected.size === 0) {
+    resultBar.className = 'result-bar empty';
+    resultBar.innerHTML = '👆 右の料理一覧から晩ごはんを選んでね（最大5品）';
+  } else if (totalCA >= target) {
+    const over = totalCA - target;
+    resultBar.className = 'result-bar sufficient';
+    resultBar.innerHTML = `😊 カルシウムがしっかりと足りています！（目標より${over}mg多い）`;
+  } else {
+    const lack = target - totalCA;
+    resultBar.className = 'result-bar insufficient';
+    resultBar.innerHTML = `😢 カルシウムがあと少し…あと${lack}mg必要だよ`;
+  }
+
+  // tray
+  renderTray();
+}
+
+function renderTray() {
+  const tray = document.getElementById('tray-items');
+  if (selected.size === 0) {
+    tray.innerHTML = '<span class="tray-empty">まだ選んでいません</span>';
+    return;
+  }
+  tray.innerHTML = '';
+  selected.forEach(id => {
+    const f = FOODS.find(x => x.id === id);
+    if (!f) return;
+    const chip = document.createElement('div');
+    chip.className = 'tray-chip';
+    chip.innerHTML = `<span class="chip-emoji">${f.emoji}</span>${f.name}（${f.ca}mg）<span class="chip-remove">✕</span>`;
+    chip.onclick = () => { selected.delete(id); renderFoodList(); updateStatus(); };
+    tray.appendChild(chip);
+  });
+}
+
+function resetAll() {
+  selected.clear();
+  renderFoodList();
+  updateStatus();
+}
+</script>
+</body>
+</html>
